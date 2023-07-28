@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "151914328027",
+    "project_id": "noteshub-17c84",
+    "storage_bucket": "noteshub-17c84.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:151914328027:android:839c6a7b88cba3e825c1fe",
+        "android_client_info": {
+          "package_name": "com.example.noteshub"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "151914328027-2svvh6okqbjg7qjudb1stgvtd1isgvuj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.noteshub",
+            "certificate_hash": "aad9eca9821b1d9260fa6a0b6d76b4756861e342"
+          }
+        },
+        {
+          "client_id": "151914328027-k0rgcmjn9j650kgut0gv71b33kc3r2rm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCE8X_8LoZ_dU-xNuXSBP5okr9sH035SGk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "151914328027-3mu1f5hnu5ffh8389usnfn8f551vraq2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
