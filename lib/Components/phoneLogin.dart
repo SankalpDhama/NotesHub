@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-
-class phoneLogin extends StatefulWidget {
-  const phoneLogin({super.key});
-
+class PhoneLogin extends StatefulWidget {
+  const PhoneLogin({super.key});
   @override
-  State<phoneLogin> createState() => _phoneLoginState();
+  State<PhoneLogin> createState() => _PhoneLoginState();
 }
-
-class _phoneLoginState extends State<phoneLogin> {
+class _PhoneLoginState extends State<PhoneLogin> {
   TextEditingController countryCode=TextEditingController();
   @override
   void initState(){

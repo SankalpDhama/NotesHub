@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 
 import '../Resources/AuthService.dart';
-class diffSignInComponent extends StatefulWidget {
-  const diffSignInComponent({super.key});
+class DiffSignInComponent extends StatefulWidget {
+  const DiffSignInComponent({super.key});
 
   @override
-  State<diffSignInComponent> createState() => _diffSignInComponentState();
+  State<DiffSignInComponent> createState() => _DiffSignInComponentState();
 }
 
-class _diffSignInComponentState extends State<diffSignInComponent> {
+class _DiffSignInComponentState extends State<DiffSignInComponent> {
+  final AuthService _authService=AuthService();
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -19,7 +20,14 @@ class _diffSignInComponentState extends State<diffSignInComponent> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               ElevatedButton(
-                onPressed: () => AuthService().signInWithGoogle(),
+                onPressed: () async{
+                  bool res= await AuthService().signInWithGoogle(context);
+                  if(res){
+                    Navigator.pushNamed(context,'/select');
+                  }else{
+
+                  }
+                },
                 child: Image.asset('assets/images/logo/googlelogo.png',
                     height: 20, width: 20),
               ),
