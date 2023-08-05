@@ -11,4 +11,20 @@ Future<bool> checkBool(String name) async {
   bool pdfIsLiked = prefs.getBool(name) ?? false;
   return pdfIsLiked;
 }
+addStringToSF(String key,String value) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.setString(key,value);
+}
+Future<String?> getStringValuesSF(String name) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  //Return String
+  String? stringValue = prefs.getString(name);
+  return stringValue;
+}
 // baad mei gauth semester add krdio
+
+removeValuesSF(String value) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  //Remove String
+  prefs.remove(value);
+}

@@ -5,19 +5,24 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flash/flash.dart';
 import 'package:flutter/material.dart';
-import 'package:like_button/like_button.dart';
+
 import 'package:noteshub/Pages/PdfViewScreen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:noteshub/Resources/AuthService.dart';
 import '../Resources/sharedPreferences.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
-
+  const HomeScreen({super.key, required this.subject, required this.sem});
+  final String subject;
+  final String sem;
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  String get subject => widget.subject;
+
+  String get sem => widget.sem;
+
   void _showSuccessFlash(BuildContext context, String message) {
     showFlash(
       context: context,
@@ -44,6 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
   }
+
   //firebase methods
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -55,6 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final downloadLink = await reference.getDownloadURL();
     return downloadLink;
   }
+
   void pickFile() async {
     final pickedFile = await FilePicker.platform.pickFiles(
       type: FileType.custom,
@@ -65,24 +72,27 @@ class _HomeScreenState extends State<HomeScreen> {
       File file = File(pickedFile.files[0].path!);
       final downloadLink = await uploadPdf(fileName, file);
       try {
-        _firestore.collection("1").add({
+        _firestore.collection(sem).add({
           "Name": fileName,
           "Link": downloadLink,
-          "Subject": fileName,
+          "subject": subject,
           "Votes": 0,
         });
         print("success");
+        getAllPdf();
         _showSuccessFlash(context, "data added successfully");
       } on FirebaseException catch (e) {
         _showSuccessFlash(context, e.toString());
       }
     }
   }
+
   List<QueryDocumentSnapshot> pdfData = [];
   void getAllPdf() async {
     try {
       final results = await _firestore
-          .collection('1')
+          .collection(sem)
+          .where("subject", isEqualTo: subject)
           .orderBy("Votes", descending: true)
           .get();
       setState(() {
@@ -93,6 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
       print(f);
     }
   }
+
   Future<void> incrementLikesCount(int index) async {
     try {
       var documentSnapshot = pdfData[index];
@@ -113,7 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
         'Votes': FieldValue.increment(-1),
       });
       print('Likes count incremented successfully.');
-      getAllPdf();
+      // getAllPdf();
     } catch (e) {
       print('Error updating data: $e');
     }
@@ -124,18 +135,27 @@ class _HomeScreenState extends State<HomeScreen> {
     getAllPdf();
   }
 
+  final _auth = AuthService();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(actions: [
-        Center(child: Text("Add a New Doc")),
+        Center(
+          child: Text("Add a New Doc"),
+        ),
         IconButton(
           icon: Icon(Icons.add),
           onPressed: pickFile,
         ),
+        IconButton(
+            onPressed: () {
+              _auth.signOut();
+              Navigator.pushNamed(context, '/login');
+            },
+            icon: Icon(IconData(0xe3b3, fontFamily: 'MaterialIcons')))
       ]),
       body: StreamBuilder<QuerySnapshot>(
-        stream: _firestore.collection('1').snapshots(),
+        stream: _firestore.collection(subject).snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return CircularProgressIndicator();
@@ -176,26 +196,26 @@ class _HomeScreenState extends State<HomeScreen> {
                         decoration: BoxDecoration(
                             border: Border.all(
                                 width: 10, color: Colors.transparent),
-                            color: const Color.fromRGBO(0, 0, 0,
-                                0.5)
-                            ),
+                            color: const Color.fromRGBO(0, 0, 0, 0.5)),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              pdfData[index]['Name'],
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headlineSmall!
-                                  .copyWith(
-                                    color: Colors.white,
-                                  ),
+                            Expanded(
+                              child: Text(
+                                pdfData[index]['Name'],
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headlineSmall!
+                                    .copyWith(
+                                      color: Colors.white,
+                                    ),
+                              ),
                             ),
                             Row(
                               children: [
                                 FutureBuilder<Widget>(
                                   future: buildWidgetWithFuture(
-                                      pdfData[index]['Name'], index),
+                                      pdfData[index]['Name'],index),
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState ==
                                         ConnectionState.waiting) {
@@ -230,6 +250,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
   Widget likeButton(bool isLiked, String name, int index) {
     Color col = Colors.white;
     if (isLiked) {
@@ -257,6 +278,7 @@ class _HomeScreenState extends State<HomeScreen> {
       color: col,
     );
   }
+
   Future<Widget> buildWidgetWithFuture(String name, int index) async {
     bool data = await checkBool(name);
     return likeButton(data, name, index);

@@ -17,10 +17,6 @@ class _PhoneLoginState extends State<PhoneLogin> {
     return Container(
       child: Column(
         children: [
-          Text(
-            "Please Login",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-          ),
         SizedBox(
           height: 50,
           width: 300,

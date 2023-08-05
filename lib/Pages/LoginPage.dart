@@ -24,7 +24,12 @@ class _LoginPageState extends State<LoginPage> {
             children: [
               Image.asset('assets/images/logo/NotesLogo.png'),
               // SizedBox(width:double.infinity,height: 200,child: TextLiquidFill(text: "Please Login",waveColor: Colors.white,boxBackgroundColor:backgroundColor,textStyle: TextStyle(fontSize: 50,),)),
-              PhoneLogin(),
+              // PhoneLogin(),
+              Text(
+                "Please Login",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              ),
+              SizedBox(height: 20,),
               DiffSignInComponent(),
             ],
           ),
