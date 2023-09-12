@@ -7,6 +7,9 @@ import 'package:noteshub/Resources/sharedPreferences.dart';
 class AuthService{
   static String userPhotoUrl="";
   static String displayName="";
+  static String role="";
+  static String uid="";
+  FirebaseFirestore _firestore=FirebaseFirestore.instance;
   Stream<User?> get authChanges => FirebaseAuth.instance.authStateChanges();
   Future<bool> signInWithGoogle(BuildContext context) async {
     bool res=false;
@@ -26,12 +29,24 @@ class AuthService{
             'username':user.displayName,
             'uid':user.uid,
             'profilePhoto':user.photoURL,
+            'role':'Student',
           });
         }
       res=true;
         print(user.displayName);
         userPhotoUrl=user.photoURL!;
         displayName=user.displayName!;
+        uid=user.uid;
+        DocumentSnapshot doc=await FirebaseFirestore.instance.collection('users').doc(uid).get();
+        Map<String,dynamic>? temp=doc.data() as Map<String,dynamic>;
+        if(temp==null){
+          print("temp is null");
+          role='Student';
+        }else{
+          print(temp);
+          role=temp["role"];
+          print(AuthService.role+"role value not null case");
+        }
       }
     } on FirebaseAuthException catch (e) {
       res=false;
@@ -47,4 +62,12 @@ class AuthService{
       print(e);
     }
   }
+  // Future<String> fetchData() async{
+  //   DocumentSnapshot documentSnapshot=await FirebaseFirestore.instance.collection('users').doc(uid).get();
+  //   Map<String,dynamic>? data=documentSnapshot.data() as Map<String,dynamic>;
+  //   if(data!=null){
+  //     return 'Student';
+  //   }
+  //   return data['role'];
+  // }
 }

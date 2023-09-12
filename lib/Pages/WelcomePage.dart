@@ -27,7 +27,7 @@ class _WelcomePageState extends State<WelcomePage> {
           IconButton(onPressed: (){
             _auth.signOut();
             Navigator.pushNamed(context, '/login');
-          }, icon: Icon(IconData(0xe3b3, fontFamily: 'MaterialIcons')))
+          }, icon: Icon(const IconData(0xe3b3, fontFamily: 'MaterialIcons')))
         ],
       ),
       floatingActionButton: FloatingActionButton(

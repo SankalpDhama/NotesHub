@@ -4,10 +4,12 @@ import 'package:noteshub/Pages/HomePage.dart';
 import 'package:noteshub/Pages/LoginPage.dart';
 import 'package:noteshub/Pages/PdfViewScreen.dart';
 import 'package:noteshub/Pages/WelcomePage.dart';
+import 'package:noteshub/Pages/notUsed/SelectionPage.dart';
 import 'package:noteshub/Resources/AuthService.dart';
 import 'package:noteshub/constant/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'Pages/AdminPage.dart';
 import 'Pages/SubjectSelectPage.dart';
 import 'Pages/notUsed/otpPage.dart';
 import 'Resources/sharedPreferences.dart';
@@ -29,16 +31,17 @@ class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
   String branch="";
   String sem="";
-  getBranchFromSF() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    //Return String
-    branch = prefs.getString('Branch')??"";
-  }
-  getSemFromSF() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    //Return String
-    sem = prefs.getString('sem')??"";
-  }
+  // getBranchFromSF() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   //Return String
+  //   branch = prefs.getString('Branch')??"";
+  // }
+  // getSemFromSF() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   //Return String
+  //   sem = prefs.getString('sem')??"";
+  // }
+  //
   @override
   void initState(){
       super.initState();
@@ -46,7 +49,6 @@ class _MyAppState extends State<MyApp> {
       getStringValuesSF('sem');
   }
   Widget build(BuildContext context) {
-
     return MaterialApp(
       title: 'NotesHub',
       debugShowCheckedModeBanner: false,
@@ -57,6 +59,7 @@ class _MyAppState extends State<MyApp> {
       routes: {
         '/login':(context)=>const LoginPage(),
         '/select':(context)=>const WelcomePage(),
+        // '/admin':(context)=>const AdminPage(),
       },
       home: StreamBuilder(
         stream: AuthService().authChanges,
@@ -73,7 +76,7 @@ class _MyAppState extends State<MyApp> {
             if(branch!="" && sem!=""){
               return SubjectSelect(branch: branch, sem: sem);
             }
-            return const WelcomePage();
+            return AdminPage();
           }
           return const LoginPage();
         },

@@ -10,7 +10,6 @@ class DiffSignInComponent extends StatefulWidget {
 }
 
 class _DiffSignInComponentState extends State<DiffSignInComponent> {
-  final AuthService _authService = AuthService();
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -26,7 +25,7 @@ class _DiffSignInComponentState extends State<DiffSignInComponent> {
                   onPressed: () async {
                     bool res = await AuthService().signInWithGoogle(context);
                     if (res) {
-                      Navigator.pushNamed(context, '/select');
+                      AuthService.role=='Student'?Navigator.pushNamed(context, '/select'):Navigator.pushNamed(context, '/admin');
                     } else {}
                   },
                   child: Row(

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flash/flash.dart';
 import 'package:flutter/material.dart';
@@ -19,36 +20,21 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  String? textValue;
+  final myController = TextEditingController();
+  String fileName = '';
+  Future<void> reportSend(String desc,String link) async {
+    await FirebaseFirestore.instance.collection('report').doc(fileName).set({
+      'name': fileName,
+      'desc': desc,
+      'link': link,
+    });
+    print('done');
+  }
   String get subject => widget.subject;
 
   String get sem => widget.sem;
 
-  void _showSuccessFlash(BuildContext context, String message) {
-    showFlash(
-      context: context,
-      duration: Duration(seconds: 3),
-      builder: (context, controller) {
-        return FlashBar(
-          controller: controller,
-          backgroundColor: Colors.pinkAccent,
-          behavior: FlashBehavior.floating,
-          position: FlashPosition.bottom,
-          forwardAnimationCurve: Curves.easeInCirc,
-          reverseAnimationCurve: Curves.bounceIn,
-          content: Row(
-            children: [
-              Icon(Icons.check),
-              SizedBox(
-                width: 10,
-              ),
-              Text(message),
-            ],
-          ),
-          // You can customize the appearance of the toast here
-        );
-      },
-    );
-  }
 
   //firebase methods
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -72,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
       File file = File(pickedFile.files[0].path!);
       final downloadLink = await uploadPdf(fileName, file);
       try {
-        _firestore.collection(sem).add({
+        _firestore.collection(sem).doc(fileName).set({
           "Name": fileName,
           "Link": downloadLink,
           "subject": subject,
@@ -88,6 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   List<QueryDocumentSnapshot> pdfData = [];
+
   void getAllPdf() async {
     try {
       final results = await _firestore
@@ -129,13 +116,21 @@ class _HomeScreenState extends State<HomeScreen> {
       print('Error updating data: $e');
     }
   }
+
   @override
   void initState() {
     super.initState();
     getAllPdf();
   }
 
+  @override
+  void dispose() {
+    myController.dispose();
+    super.dispose();
+  }
+
   final _auth = AuthService();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -152,7 +147,7 @@ class _HomeScreenState extends State<HomeScreen> {
               _auth.signOut();
               Navigator.pushNamed(context, '/login');
             },
-            icon: Icon(IconData(0xe3b3, fontFamily: 'MaterialIcons')))
+            icon: Icon(const IconData(0xe3b3, fontFamily: 'MaterialIcons')))
       ]),
       body: StreamBuilder<QuerySnapshot>(
         stream: _firestore.collection(subject).snapshots(),
@@ -178,8 +173,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                              builder: (context) =>
-                                  PdfView(fileUrl: pdfData[index]['Link'])),
+                            builder: (context) =>
+                                PdfView(fileUrl: pdfData[index]['Link']),
+                          ),
                         );
                       },
                       child: Image.asset(
@@ -198,7 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 width: 10, color: Colors.transparent),
                             color: const Color.fromRGBO(0, 0, 0, 0.5)),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             Expanded(
                               child: Text(
@@ -215,7 +211,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               children: [
                                 FutureBuilder<Widget>(
                                   future: buildWidgetWithFuture(
-                                      pdfData[index]['Name'],index),
+                                      pdfData[index]['Name'], index),
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState ==
                                         ConnectionState.waiting) {
@@ -235,6 +231,47 @@ class _HomeScreenState extends State<HomeScreen> {
                                   pdfData[index]['Votes'].toString(),
                                 ),
                               ],
+                            ),
+                            SizedBox(
+                              width: 20.0,
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      title: Text(
+                                          "Please Provide reason For reporting"),
+                                      content: TextField(
+                                        controller: myController,
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context),
+                                          child: Text("cancel"),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              fileName = pdfData[index]['Name'];
+                                              if (myController.text.isEmpty){
+                                                _showSuccessFlash(context, 'Please write description');
+                                              }else{
+                                                reportSend(myController.text,pdfData[index]['Link']);
+                                                Navigator.pop(context);
+                                              }
+                                            });
+                                          },
+                                          child: Text("ok"),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                              icon: Icon(Icons.more_vert),
                             ),
                           ],
                         ),
@@ -283,4 +320,31 @@ class _HomeScreenState extends State<HomeScreen> {
     bool data = await checkBool(name);
     return likeButton(data, name, index);
   }
+}
+
+void _showSuccessFlash(BuildContext context, String message) {
+  showFlash(
+    context: context,
+    duration: Duration(seconds: 3),
+    builder: (context, controller) {
+      return FlashBar(
+        controller: controller,
+        backgroundColor: Colors.pinkAccent,
+        behavior: FlashBehavior.floating,
+        position: FlashPosition.bottom,
+        forwardAnimationCurve: Curves.easeInCirc,
+        reverseAnimationCurve: Curves.bounceIn,
+        content: Row(
+          children: [
+            Icon(Icons.check),
+            SizedBox(
+              width: 10,
+            ),
+            Text(message),
+          ],
+        ),
+        // You can customize the appearance of the toast here
+      );
+    },
+  );
 }
