@@ -1,10 +1,10 @@
-# NoteShare: Flutter App for Collaborative NoteSharing
+# NotesHub: Flutter App for Collaborative NoteSharing
 
-![NoteShare Logo](link_to_logo_image)
+![NotesHub Logo](link_to_logo_image)
 
 ## Overview
 
-NoteShare is a versatile Flutter app developed using Firebase, Cloud Firestore, Riverpod, and Android Studio. The app empowers users to upload, share, and collaborate on notes in various formats, including PDF and DOCX. With the implemented upvoting system, users can rank notes, promoting the visibility of top-rated content within the community.
+NotesHub is a versatile Flutter app developed using Firebase, Cloud Firestore, Riverpod, and Android Studio. The app empowers users to upload, share, and collaborate on notes in various formats, including PDF and DOCX. With the implemented upvoting system, users can rank notes, promoting the visibility of top-rated content within the community.
 
 ## Features
 
@@ -14,11 +14,11 @@ NoteShare is a versatile Flutter app developed using Firebase, Cloud Firestore, 
 
 - **Responsive UI/UX**: A responsive and user-friendly interface contributes to a remarkable 30% increase in user retention.
 
-- **Performance Optimization**: Through rigorous optimization efforts, NoteShare achieves a 25% faster loading time, resulting in a 15% higher user satisfaction rate.
+- **Performance Optimization**: Through rigorous optimization efforts, NotesHub achieves a 25% faster loading time, resulting in a 15% higher user satisfaction rate.
 
 ## Getting Started
 
-To get started with NoteShare, follow the steps below:
+To get started with NotesHub, follow the steps below:
 
 ### Prerequisites
 
@@ -29,11 +29,11 @@ To get started with NoteShare, follow the steps below:
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/your-username/noteshare.git
+   git clone https://github.com/your-username/NotesHub.git
 2. Navigate to the project directory:
 
    ```bash
-   cd noteshare
+   cd NotesHub
 3. Install dependencies:
     ```bash
    flutter pub get
@@ -46,4 +46,4 @@ To get started with NoteShare, follow the steps below:
 
   ## Contributing
 
-We welcome contributions from the community! If you'd like to contribute to NoteShare, please follow our contribution guidelines.
+We welcome contributions from the community! If you'd like to contribute to NotesHub, please follow our contribution guidelines.
